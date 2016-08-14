@@ -24,7 +24,6 @@ const int HOG_DI = 96;
 const int HOF_DI = 108;
 const int MBH_DI = 192;
 const int OBJ_DI = 10;
-const int gmmSize = 256;
 #define PCA_MEAN	"mean"
 #define PCA_EIGEN_VECTOR	"eigen_vector"
 

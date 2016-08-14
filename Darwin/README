@@ -1,0 +1,1 @@
+g++ -o getdarwin getDarwin.cpp -I ~/lib/liblinear/ -lstdc++ -lm

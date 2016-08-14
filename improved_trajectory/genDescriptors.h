@@ -5,12 +5,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
- 
 using namespace std;
 static const int _MAX_DRIVE = 20;
 static const int _MAX_DIR = 100;
 static const int _MAX_FNAME = 30;
 static const int _MAX_EXT = 20;
+
 void genDescriptors(int st,int send,char **fullvideoname, char *descriptor_path){
     char drive[_MAX_DRIVE];
     char dir[_MAX_DIR];
