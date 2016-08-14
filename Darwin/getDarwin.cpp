@@ -19,7 +19,7 @@ struct problem prob;
 struct model* model_;
 
 using namespace std;
-const int DIMENSION = 192*gmmSize;
+const int DIMENSION = 30*gmmSize;
 
 float **getNonLinearity(float ** Data , int frames)
 {
@@ -69,6 +69,26 @@ float **normalizedL2(float ** Data, int frames)
     }
     return Data;
 }
+
+void darWinNormalizedL2(float ** Data, int frames, int di)
+{
+    float sum = 0;
+    for (int i = 0; i < frames; ++i)
+    {
+        sum = 0;
+        for (int j = 0; j < di; ++j)
+        {
+            sum += fabs(Data[i][j]) *fabs(Data[i][j]);
+        }
+        sum = sqrt(sum);
+        for (int j = 0; j < di; ++j)
+        {
+            Data[i][j] /= sum;
+        }
+    }
+    return;
+}
+
 void saveData(float ** Data,int frames)
 {
     ofstream file("./data");
@@ -166,6 +186,8 @@ float * liblineaqrsvr(float ** Data,int frames)
     free(x_space);
     return result;
 }
+
+
 void getDarwin(char * wFilePath,float **data, int frames)
 {
     float **Data  = new float*[frames];
@@ -212,17 +234,31 @@ void readFVfromFile(char * fvFilePath, float **data, int SAMPLENUM)
     file.close();
     return ;
 }
+void readDarWinfromFile(char * fvFilePath, float **data, int index)
+{
+    ifstream file(fvFilePath);
+    for (int i = 0; i < 2*DIMENSION*gmmSize; ++i)
+    {
+       file >> data[index][i];
+       data[index][i] =sqrt(data[index][i]);
+    }
+    file.close();
+    return ;
+}
+
 int main(int argc, char const *argv[])
 {
     char **fullvideoname = getFullVideoName();
     st = 1;
     send = 4;
     int gmmSize = 256;
-    char *feature_out = "../../remote/Data/feats/mbh/";
+    char *feature_out = "../../remote/Data/feats/trj/";
     char *wFilePath = new char[50]; 
    
     char *fvFilePath = new char[100];
+    int all_video = 4;//you should replace it with dataSetSize;
 
+   
     for (int i = st; i <= send ; ++i)
     {
         // read fv file to get Origin Data
@@ -249,5 +285,32 @@ int main(int argc, char const *argv[])
         // save w Data;
     }
 
+    float ** all_data_cell = new float*[all_video];
+    for (int i = 0; i < all_video ; ++i)
+    {
+        all_data_cell[i] = new float[2*DIMENSION*gmmSize];
+    }
+    for (int i = st; i <= send ; ++i)
+    {
+        strcpy(wFilePath,"../../remote/Data/feats/w/");
+        strcat(wFilePath,basename(fullvideoname[i]));
+        strcat(wFilePath,"-w");
+        readDarWinfromFile(wFilePath,all_data_cell,i-1);
+    }
+    
+    iline = Malloc(char,max_iline_len);
+    int ** classid = readLabelFromFile();
+    int *trn_indx = new int[trainSize];
+    int *test_indx = new int[testSize];
+    for (int i = 0; i < trainSize ; ++i)
+    {
+        trn_indx[i] = i+1;
+    }
+    for (int i = 0; i < testSize ; ++i)
+    {
+        test_indx[i] = i+824;
+    }
+    darWinNormalizedL2(all_data_cell, all_video, 2*DIMENSION*gmmSize);
+    
     return 0;
-}  
+}
