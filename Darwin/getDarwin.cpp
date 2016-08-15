@@ -10,6 +10,7 @@
 #include <math.h>
 #include "generial.h"
 #include "linear.h"
+
 #define INF HUGE_VAL
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
@@ -19,7 +20,6 @@ struct problem prob;
 struct model* model_;
 
 using namespace std;
-const int DIMENSION = 30*gmmSize;
 
 float **getNonLinearity(float ** Data , int frames)
 {
@@ -70,25 +70,21 @@ float **normalizedL2(float ** Data, int frames)
     return Data;
 }
 
-void darWinNormalizedL2(float ** Data, int frames, int di)
+
+void saveData(int ** Data,char *filename,int frames, const int dim)
 {
-    float sum = 0;
+    ofstream file(filename);
+
     for (int i = 0; i < frames; ++i)
     {
-        sum = 0;
-        for (int j = 0; j < di; ++j)
+        for (int j = 0; j < dim; ++j)
         {
-            sum += fabs(Data[i][j]) *fabs(Data[i][j]);
+            file<<Data[i][j]<<" ";
         }
-        sum = sqrt(sum);
-        for (int j = 0; j < di; ++j)
-        {
-            Data[i][j] /= sum;
-        }
+        file<<endl;
     }
-    return;
+    file.close();
 }
-
 void saveData(float ** Data,int frames)
 {
     ofstream file("./data");
@@ -107,6 +103,7 @@ void saveData(float ** Data,int frames)
 }
 void saveResult(float * w_fow,float *w_ref,char *filename)
 {
+    //cout<<filename<<endl;
     ofstream file(filename);
     for (int j = 0; j < DIMENSION; ++j)
     {
@@ -141,7 +138,7 @@ float * liblineaqrsvr(float ** Data,int frames)
     prob.y = Malloc(double,prob.l);
     prob.x = Malloc(struct feature_node *,prob.l);
     x_space = Malloc(struct feature_node,elements+prob.l);
-    saveData(Data,frames);
+    //saveData(Data,frames);
 
     max_index = 0;
     j=0;
@@ -173,14 +170,15 @@ float * liblineaqrsvr(float ** Data,int frames)
     param.solver_type = L2R_L2LOSS_SVR;
     param.C = 1.0f;
     param.eps = 0.001;
-
+    print_func = &print_null;
+    set_print_string_function(print_func);
     model_=train(&prob, &param);
     for(int i=0; i<DIMENSION; i++)
     {
         result[i] =  model_->w[i];
     }
-
     destroy_param(&param);
+    free_and_destroy_model(&model_);
     free(prob.y);
     free(prob.x);
     free(x_space);
@@ -220,6 +218,14 @@ void getDarwin(char * wFilePath,float **data, int frames)
     }
     float *w_ref = liblineaqrsvr(getNonLinearity(Data,frames),frames);
     saveResult(w_fow,w_ref,wFilePath);
+    delete columnSum;
+    for (int i = 0; i < frames; ++i)
+    {
+        delete [] Data[i];
+    }
+    delete []Data;
+    delete w_fow;
+    delete w_ref;
 }
 void readFVfromFile(char * fvFilePath, float **data, int SAMPLENUM)
 {
@@ -234,39 +240,24 @@ void readFVfromFile(char * fvFilePath, float **data, int SAMPLENUM)
     file.close();
     return ;
 }
-void readDarWinfromFile(char * fvFilePath, float **data, int index)
-{
-    ifstream file(fvFilePath);
-    for (int i = 0; i < 2*DIMENSION*gmmSize; ++i)
-    {
-       file >> data[index][i];
-       data[index][i] =sqrt(data[index][i]);
-    }
-    file.close();
-    return ;
-}
 
 int main(int argc, char const *argv[])
 {
     char **fullvideoname = getFullVideoName();
-    st = 1;
-    send = 4;
-    int gmmSize = 256;
-    char *feature_out = "../../remote/Data/feats/trj/";
-    char *wFilePath = new char[50]; 
+
+    char *wFilePath = new char[100]; 
    
     char *fvFilePath = new char[100];
-    int all_video = 4;//you should replace it with dataSetSize;
 
-   
-    for (int i = st; i <= send ; ++i)
+    int i;
+    for ( i = st; i < send ; ++i)
     {
         // read fv file to get Origin Data
         strcpy(fvFilePath,feature_out);
         strcat(fvFilePath,basename(fullvideoname[i]));
         strcat(fvFilePath,"-fv");
 
-        strcpy(wFilePath,"../../remote/Data/feats/w/");
+        strcpy(wFilePath,darwin_feature);
         strcat(wFilePath,basename(fullvideoname[i]));
         strcat(wFilePath,"-w");
 
@@ -274,43 +265,22 @@ int main(int argc, char const *argv[])
         int frames = readLineFromFile(fvFilePath);
         float ** data = new float*[frames];
         //cout<<frames<<" is its lines"<<endl;
-        for (int i = 0; i < frames; ++i)
+        for (int s = 0; s < frames; ++s)
         {
-            data[i] = new float[DIMENSION*gmmSize];
+            data[s] = new float[DIMENSION];
         }
         readFVfromFile(fvFilePath,data,frames);
-        
         // use getDarwin() funciton to get w Data
         getDarwin(wFilePath,data,frames);
         // save w Data;
+        for (int s = 0; s < frames; ++s)
+        {
+            delete [] data[s] ;
+        }
+        delete []data;
     }
-
-    float ** all_data_cell = new float*[all_video];
-    for (int i = 0; i < all_video ; ++i)
-    {
-        all_data_cell[i] = new float[2*DIMENSION*gmmSize];
-    }
-    for (int i = st; i <= send ; ++i)
-    {
-        strcpy(wFilePath,"../../remote/Data/feats/w/");
-        strcat(wFilePath,basename(fullvideoname[i]));
-        strcat(wFilePath,"-w");
-        readDarWinfromFile(wFilePath,all_data_cell,i-1);
-    }
-    
-    iline = Malloc(char,max_iline_len);
-    int ** classid = readLabelFromFile();
-    int *trn_indx = new int[trainSize];
-    int *test_indx = new int[testSize];
-    for (int i = 0; i < trainSize ; ++i)
-    {
-        trn_indx[i] = i+1;
-    }
-    for (int i = 0; i < testSize ; ++i)
-    {
-        test_indx[i] = i+824;
-    }
-    darWinNormalizedL2(all_data_cell, all_video, 2*DIMENSION*gmmSize);
-    
+    delete []fvFilePath;
+    delete []wFilePath;
+    releaseFullVideoName(fullvideoname);
     return 0;
 }

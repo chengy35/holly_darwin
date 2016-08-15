@@ -3,21 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
-
 #include <iostream>
 #include <string.h>
-
-#include <vector>
-#include <math.h>
-#include <zlib.h>
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
-
-#include <set>
-#include <iterator>
-#include <algorithm>
-
-
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
 #define PCA_MEAN	"mean"
@@ -27,7 +14,9 @@ static char* iline;
 static int max_iline_len = 1024;
 using namespace std;
 
-
+static int st = 0;
+static int send = 9;
+static int num_videos = ;
 static int datasetSize = 1707;
 static const int actionType = 12;
 static const int filePathSize = 100;
@@ -38,7 +27,7 @@ const int HOF_DI = 108;
 const int MBH_DI = 192;
 const int OBJ_DI = 10;
 
-const int samples = 100000; // just for test.
+int samples = 100000; // just for test.
 
 const int gmmSize = 256;
 static char* iiline;
@@ -85,27 +74,11 @@ static char *sampledmbhFeatureAllData = "../../../remote/Data/Vocab/mbhAll";
 static char tempStyeStart[filePathSize] = "../../../remote/Hollywood2/AVIClips/actioncliptrain";
 static char tempStyeStart2[filePathSize] = "../../../remote/Hollywood2/AVIClips/actioncliptest";
 
+static int cur_train_index_s = 0;
+static int cur_train_index_e = 822;
 
-static char *darwin_feature = "../../../remote/Data/feats/w/";
-
-//==========================if you want to use other feature===============================//
-static char *feature_out = "../../../remote/Data/feats/hof/";
-const int DIMENSION = HOF_DI*gmmSize; // use trj as feature out...
-
-static int trainNum = 2;
-static int testNum = 2;
-static int st = 0;
-static int send = 4;
-//=========================================================================================//
-const int darwinDimension = 2*DIMENSION;
-static char *accuracyFile = "../accuracyFile";
-
-static int num_videos = send;
-
-//to make svm salient.
-void print_null(const char *s) {}
-
-void (*print_func)(const char*) = NULL;	// default printing to stdout
+static int cur_test_index_s = 823;
+static int cur_test_index_e = 1706;
 
 char* Readiline(FILE* input)
 {
@@ -148,7 +121,7 @@ int ** readLabelFromFile()
 			label[i][j] = -1;
 		}
 	}
-	FILE *labelfile = fopen("../classLabel.txt","r");
+	FILE *labelfile = fopen("./classLabel.txt","r");
 	int iiline = 0;
 	int index= 0;
 	int tempvalue = 0;
@@ -221,16 +194,6 @@ char ** getFullVideoName()
 		}
 		//cout<<fullvideoname[i]<<endl;
 	}
-	delete [] resultStart;
-	delete [] resultStart2;
 	return fullvideoname;
-}
-void  releaseFullVideoName(char ** fullvideoname)
-{
-	for (int i = 0; i < datasetSize; ++i)
-	{
-		delete [] fullvideoname[i];
-	}
-	delete fullvideoname;
 }
 #endif

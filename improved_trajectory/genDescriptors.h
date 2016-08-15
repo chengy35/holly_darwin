@@ -1,10 +1,6 @@
 #ifndef _GENDESCRIPTORS_H
 #define _GENDESCRIPTORS_H
-#include <iostream>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <fstream>
+#include "generial.h"
 using namespace std;
 static const int _MAX_DRIVE = 20;
 static const int _MAX_DIR = 100;
@@ -33,7 +29,6 @@ void genDescriptors(int st,int send,char **fullvideoname, char *descriptor_path)
 	    else
 	    {
 	    	cout<<"extract improved features"<<descriptorFile<<endl; //feature
-	    	//system
 	    	strcpy(command,"./debug/DenseTrackStab ");
 	    	strcat(command,fullvideoname[i]);
 	    	strcat(command,".avi | gzip > ");
@@ -43,6 +38,7 @@ void genDescriptors(int st,int send,char **fullvideoname, char *descriptor_path)
 	    }
 	    _file.close();
     }
-
+    delete []descriptorFile;
+    delete []command;
 }
 #endif

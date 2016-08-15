@@ -1,8 +1,8 @@
-#include "genDescriptors.h"
+#include "getGMM.h"
 int main(int argc, char const *argv[])
 {
 	char **fullvideoname = getFullVideoName();
-	genDescriptors(st,send,fullvideoname,descriptor_path);
+	getGMM(fullvideoname,vocabDir,descriptor_path);
 	releaseFullVideoName(fullvideoname);
 	return 0;
 }

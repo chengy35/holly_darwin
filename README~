@@ -39,5 +39,4 @@ Darwin　利用liblinear得到每个视频的w参数，也就是说，把每个�
 trainAndTest　读取每个视频的w表示，进行分类，并且统计结果，保存在当前目录下面的accuracyFile中
 
 运行方法：bash run.sh
-
 test是测试程序，没什么用...

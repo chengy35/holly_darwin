@@ -1,6 +1,6 @@
 CXX ?= g++
 CC ?= gcc
-CFLAGS = -Wall -Wconversion -O3 -fPIC -lstdc++
+CFLAGS = -Wall -Wconversion -O3 -fPIC -lstdc++ -I ../
 LIBS = blas/blas.a
 SHVER = 3
 OS = $(shell uname)
@@ -9,11 +9,7 @@ OS = $(shell uname)
 all: getDarwin
 
 lib: linear.o tron.o blas/blas.a
-	if [ "$(OS)" = "Darwin" ]; then \
-		SHARED_LIB_FLAG="-dynamiclib -Wl,-install_name,liblinear.so.$(SHVER)"; \
-	else \
-		SHARED_LIB_FLAG="-shared -Wl,-soname,liblinear.so.$(SHVER)"; \
-	fi; \
+	SHARED_LIB_FLAG="-shared -Wl,-soname,liblinear.so.$(SHVER)"; 
 	$(CXX) $${SHARED_LIB_FLAG} linear.o tron.o blas/blas.a -o liblinear.so.$(SHVER)
 
 getDarwin: tron.o linear.o getDarwin.cpp blas/blas.a
