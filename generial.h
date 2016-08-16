@@ -102,6 +102,9 @@ static char *accuracyFile = "../accuracyFile";
 
 static int num_videos = send;
 
+static int C[11] = {-5,  -3, -1, 1, 3, 5, 7, 9, 11, 13, 15};
+static int cChoice = 11;
+
 //to make svm salient.
 void print_null(const char *s) {}
 
