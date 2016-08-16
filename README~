@@ -39,4 +39,16 @@ Darwin　利用liblinear得到每个视频的w参数，也就是说，把每个�
 trainAndTest　读取每个视频的w表示，进行分类，并且统计结果，保存在当前目录下面的accuracyFile中
 
 运行方法：bash run.sh
+
 test是测试程序，没什么用...
+
+
+
+Hollywood2 dataset [14] This dataset has been collected from 69 different Hollywood movies that include 12 action classes. It contains 1,707 videos in total where 823 videos are used for training and 884 are used for testing. Training and test videos are selected from different movies. The performance is measured by mean average precision (mAP) over all classes, as in [14].
+
+I. Laptev, M. Marszalek, C. Schmid, and B. Rozenfeld.Learning realistic human actions from movies. In CVPR,2008. 1, 2, 5
+
+HMDB51 dataset [12]. This is a generic action classification dataset composed of roughly 7,000 clips divided into 51 action classes. Videos and actions of this dataset are subject to different camera motions, viewpoints, video quality and occlusions. As done in the literature we use a one-vs- all classification strategy and report the mean classification accuracy over three standard splits provided by the authors in [12].
+
+H. Kuehne, H. Jhuang, E. Garrote, T. Poggio, and T. Serre. Hmdb: a large video database for human motion recognition. In ICCV, 2011. 5, 7
+

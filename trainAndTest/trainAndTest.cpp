@@ -140,7 +140,7 @@ void trainAndClassify(float **trainData,int Dimen,int **classlabel, int trainNum
             //cout<<endl;
             x_space[j++].index = -1;
         }
-        double best_C = CrossValidation(5);
+        double best_C = CrossValidation(5); // five-fold cross validation.
         initiateParam();
         param.C = best_C;
         
