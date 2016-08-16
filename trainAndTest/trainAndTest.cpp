@@ -126,7 +126,7 @@ void trainAndClassify(float **trainData,int Dimen,int **classlabel, int trainNum
             }
             x[s].index = -1;
             predict_label = svm_predict(model,x);
-            if(predict_label == classlabel[i+823][k])
+            if(predict_label == classlabel[i+823][k]) //need to change ............===============================
                 ++correct;
         }
         svm_free_and_destroy_model(&model);
