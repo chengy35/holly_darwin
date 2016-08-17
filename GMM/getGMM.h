@@ -163,7 +163,8 @@ char * ReadLine(gzFile gzfp)
 //find interface of gmm for next process.
 void getDescriptorFromFile(char *descriptorFileName,vector<vector<float> > *trj,vector<vector<float> > *hog,vector<vector<float> > *hof,vector<vector<float> > *mbh)
 {
-	printf("%s\n", "select DescriptorFromFile function works");
+
+	printf("%s,%s\n", descriptorFileName,"select function works");
 	int nLines = 0;
 	max_line_len = 1024;
 	iiline = Malloc(char, max_line_len);
@@ -271,7 +272,7 @@ void getGMM(char **fullvideoname,char * vocabsDir, char * descriptor_path)
 				trj.clear();
 				char *descriptorFile = new char[filePathSize];
 				strcpy(descriptorFile,descriptor_path);
-				strcat(descriptorFile,basename(fullvideoname[i+1]));
+				strcat(descriptorFile,basename(fullvideoname[i]));
 				getDescriptorFromFile(descriptorFile,&trj,&hog,&hof,&mbh);
 				int selectSize = trj.size(); //样本总数
 				bool *isSelected = new bool[selectSize];

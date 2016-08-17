@@ -250,7 +250,7 @@ int main(int argc, char const *argv[])
     char *fvFilePath = new char[100];
 
     int i;
-    for ( i = st; i < send ; ++i)
+    for ( i = 0; i < num_videos ; ++i)
     {
         // read fv file to get Origin Data
         strcpy(fvFilePath,feature_out);

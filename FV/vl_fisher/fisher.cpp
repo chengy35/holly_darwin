@@ -376,7 +376,7 @@ int main(int argc, char const *argv[]) {
 	readGmmFromFile(Mbhpriors,gmmPriorsMbhFileName);
 
 	
-	for (size_t i = st; i < send; i++) {
+	for (size_t i = 0; i < num_videos; i++) {
 		strcpy(feat_file_path,featDir);
 		strcpy(feat_trj_fv_file,strcat(strcat(strcat(feat_file_path,"trj/"),basename(fullvideoname[i])),"-fv"));
 

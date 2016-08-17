@@ -94,13 +94,12 @@ const int DIMENSION = HOF_DI*gmmSize; // use trj as feature out...
 
 static int trainNum = 2;
 static int testNum = 2;
-static int st = 0;
-static int send = 4;
+static int num_videos = 9;
 //=========================================================================================//
 const int darwinDimension = 2*DIMENSION;
 static char *accuracyFile = "../accuracyFile";
 
-static int num_videos = send;
+
 
 static int C[11] = {-5,  -3, -1, 1, 3, 5, 7, 9, 11, 13, 15};
 static int cChoice = 11;
