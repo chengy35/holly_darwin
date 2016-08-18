@@ -201,6 +201,8 @@ float* computPCAandReduce(vector<vector<float> > *data,int startIndex, int DIMEN
             oneDimResult[oneIndex++] = output_encode.at<float>(i,j);// index is 0, for interface gmm...getAndSaveGmmModel
         }
     }
+    input.release();
+    output_encode.release();
 	delete pca_encoding;
 	delete filepath;
 	return oneDimResult;
@@ -308,6 +310,11 @@ void getAndSaveFV (char *descriptorFileName, int gmmSize, float * Mbhmeans,float
 	// saveFisherVectorToFile(fv_hog,frames,(int)(2*pcaFactor*HOG_DI*gmmSize),feat_hof_fv_file);
 	// saveFisherVectorToFile(fv_hof,frames,(int)(2*pcaFactor*HOF_DI*gmmSize),feat_hog_fv_file);
 	saveFisherVectorToFile(fv_mbh,frames,(int)(2*pcaFactor*MBH_DI*gmmSize),feat_mbh_fv_file);
+	
+	for (size_t i = 0; i < frames; i++) {
+		delete fv_mbh[i];
+	}
+	delete []fv_mbh;
 }
 
 
@@ -397,11 +404,19 @@ int main(int argc, char const *argv[]) {
 		strcpy(descriptorFileName,strcat(descriptorFilePath,basename(fullvideoname[i])));
 
 		cout<<descriptorFileName<<endl;
-
+		ifstream files(feat_mbh_fv_file);
+		if(!files)
+			getAndSaveFV(descriptorFileName, gmmSize,Mbhmeans, Mbhcovariances, Mbhpriors, feat_mbh_fv_file);
+		else
+		{
+			files.close();
+			cout<<"file exist!"<<endl;
+			continue;
+		}
 		// getAndSaveFV(descriptorFileName, gmmSize,Trjmeans, Trjcovariances, Trjpriors, Hogmeans, Hogcovariances,
 		// 	Hogpriors, Hofmeans, Hofcovariances, Hofpriors, Mbhmeans, Mbhcovariances, Mbhpriors,  feat_trj_fv_file,
 		//     feat_hof_fv_file,feat_hog_fv_file,feat_mbh_fv_file);
-		getAndSaveFV(descriptorFileName, gmmSize,Mbhmeans, Mbhcovariances, Mbhpriors, feat_mbh_fv_file);
+		
 	}
 
 	releaseFullVideoName(fullvideoname);

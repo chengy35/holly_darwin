@@ -1,7 +1,7 @@
 #include "generial.h"
 using namespace cv;
 
-void saveTrainAndTestFile(char * fileName, CvMat *resultTrainData, CvMat * resultTestData,int trainSize, int testSize)
+void saveTrainAndTestFile(char * fileName, float**resultTrainData, float** resultTestData,int trainSize, int testSize)
 {
 
 	cout<<fileName<<endl;
@@ -16,18 +16,19 @@ void saveTrainAndTestFile(char * fileName, CvMat *resultTrainData, CvMat * resul
 	ofstream out(fileName);//创建目标文件
 	for (int i = 0; i < trainSize; ++i)
 	{
+		out<<0<<":"<<i+1<<" ";
 		for (int j = 0; j < trainSize; ++j)
 		{
-			out<< j <<":"<< CV_MAT_ELEM(* resultTrainData,float,i,j)<<" ";
+			out<< j <<":"<< resultTrainData[i][j]<<" ";
 		}
 		out<<endl;
 	}
 	for (int i = 0; i < testSize; ++i)
 	{
-		out<<testLabel[i]<<" "<<0<<":"<<i<<" ";
+		out<<0<<":"<<i+1<<" ";
 		for (int j = 0; j < trainSize; ++j)
 		{
-			out<< j <<":"<< CV_MAT_ELEM(* resultTestData,float,i,j)<<" ";
+			out<< j <<":"<< resultTestData[i][j]<<" ";
 		}
 		out<<endl;
 	}
@@ -43,6 +44,25 @@ void readWFromFile(char * trainVideoName,float * trainW,int index)
 	in.close();
 	return ;
 }
+void darWinNormalizedL2(float ** Data, int frames, int di)
+{
+    float sum = 0;
+    for (int i = 0; i < frames; ++i)
+    {
+        sum = 0;
+        for (int j = 0; j < di; ++j)
+        {
+            sum += fabs(Data[i][j]) *fabs(Data[i][j]);
+        }
+        sum = sqrt(sum);
+        for (int j = 0; j < di; ++j)
+        {
+            Data[i][j] /= sum;
+        }
+    }
+    return;
+}
+
 int main(int argc, char const *argv[])
 {
 
@@ -94,7 +114,6 @@ int main(int argc, char const *argv[])
 
 	CvMat *testData,*resultTestData;
 	testData = cvCreateMat( testSize, darwinDimension, CV_32FC1);
-
 	resultTestData = cvCreateMat( testSize, trainSize, CV_32FC1);
 	cvInitMatHeader( testData, testSize, darwinDimension, CV_32FC1, testW);
 	cvMatMulAdd( testData, trainDataRev, 0, resultTestData);
@@ -102,13 +121,38 @@ int main(int argc, char const *argv[])
 	cvReleaseMat(&trainDataRev);
 	cvReleaseMat(&testData);
 
-	saveTrainAndTestFile(trainAndTestFilePath,resultTrainData,resultTestData,trainSize, testSize);
+	float ** floatTrainData = new float*[trainSize];
+		for (int i = 0; i < trainSize; ++i)
+		{
+			floatTrainData[i] = new float[trainSize];
+			for (int j = 0; j < trainSize ; ++j)
+			{
+				floatTrainData[i][j] = CV_MAT_ELEM(* resultTrainData,float,i,j);
+			}
+		}
+		cvReleaseMat(&resultTrainData);
+
+	float ** floatTestData = new float*[testSize];
+	for (int i = 0; i < testSize; ++i)
+	{
+		floatTestData[i] = new float[trainSize];
+		for (int j = 0; j < trainSize ; ++j)
+		{
+			floatTestData[i][j] = CV_MAT_ELEM(* resultTestData,float,i,j);
+		}
+	}
+	cvReleaseMat(&resultTestData);
+
+	darWinNormalizedL2(floatTrainData, trainSize, trainSize);
+	darWinNormalizedL2(floatTestData, testSize, trainSize);
+
+
+	saveTrainAndTestFile(trainAndTestFilePath,floatTrainData,floatTestData,trainSize, testSize);
 	delete []trainW;
 	delete []trainLabel;
 	delete []testW;
 	delete []testLabel;
-	cvReleaseMat(&resultTrainData);
-	cvReleaseMat(&resultTestData);
+	
 	delete c;
 	return 0;
 }
