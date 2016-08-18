@@ -91,7 +91,8 @@ void readGmmFromFile(float *data, char *fileName)
 		return ;
 	}
 }
-void getDescriptorFromFile(char *descriptorFileName,vector<int>*obj,vector<vector<float> > *trj,vector<vector<float> > *hog,vector<vector<float> > *hof,vector<vector<float> > *mbh)
+//void getDescriptorFromFile(char *descriptorFileName,vector<int>*obj,vector<vector<float> > *trj,vector<vector<float> > *hog,vector<vector<float> > *hof,vector<vector<float> > *mbh)
+void getDescriptorFromFile(char *descriptorFileName,vector<int>*obj,vector<vector<float> > *mbh)
 {
 	printf("%s\n", "get DescriptorFromFile function to get fisher vector");
 	int nLines = 0;
@@ -119,29 +120,29 @@ void getDescriptorFromFile(char *descriptorFileName,vector<int>*obj,vector<vecto
 		for (j = 0; j< TRJ_DI; j++)
 		{
 			feature = strtok(NULL," \t");
-			value = atof(feature);
-			temp.push_back(value);
+			//value = atof(feature);
+			//temp.push_back(value);
 		}
-		trj->push_back(temp);
-		temp.clear();
+		//trj->push_back(temp);
+		//temp.clear();
 		for (j = 0; j< HOG_DI; j++)
 		{
 			feature = strtok(NULL," \t");
-			value = atof(feature);
-			value = sqrt(value);
-			temp.push_back(value);
+			// value = atof(feature);
+			// value = sqrt(value);
+			// temp.push_back(value);
 		}
-		hog->push_back(temp);
-		temp.clear();
+		// hog->push_back(temp);
+		// temp.clear();
 		for (j = 0; j < HOF_DI; j++)
 		{
 			feature = strtok(NULL," \t");
-			value = atof(feature);
-			value = sqrt(value);
-			temp.push_back(value);
+			// value = atof(feature);
+			// value = sqrt(value);
+			// temp.push_back(value);
 
 		}
-		hof->push_back(temp);
+		// hof->push_back(temp);
 		temp.clear();
 		for (j = 0; j < MBH_DI; j++)
 		{
@@ -227,36 +228,39 @@ void getRealFV(void * encTrj,float ** fv_trj, int indexLineofFisher,float * redu
 		}
 		vl_free(encTrj);
 }
-void getAndSaveFV (char *descriptorFileName, int gmmSize, float * Trjmeans, float * Trjcovariances, float * Trjpriors,
-	float * Hogmeans, float * Hogcovariances,float * Hogpriors, float * Hofmeans, float * Hofcovariances,
-	float * Hofpriors, float * Mbhmeans,float *  Mbhcovariances,float *  Mbhpriors,  char * feat_trj_fv_file,
-	char * feat_hof_fv_file,char * feat_hog_fv_file, char * feat_mbh_fv_file)
+// void getAndSaveFV (char *descriptorFileName, int gmmSize, float * Trjmeans, float * Trjcovariances, float * Trjpriors,
+// 	float * Hogmeans, float * Hogcovariances,float * Hogpriors, float * Hofmeans, float * Hofcovariances,
+// 	float * Hofpriors, float * Mbhmeans,float *  Mbhcovariances,float *  Mbhpriors,  char * feat_trj_fv_file,
+// 	char * feat_hof_fv_file,char * feat_hog_fv_file, char * feat_mbh_fv_file)
+void getAndSaveFV (char *descriptorFileName, int gmmSize, float * Mbhmeans,float *  Mbhcovariances,float *  Mbhpriors, 
+	char * feat_mbh_fv_file)
 {
 	vector<int> obj;
-	vector<vector<float> > trj;
-	vector<vector<float> > hog;
-	vector<vector<float> > hof;
+	// vector<vector<float> > trj;
+	// vector<vector<float> > hog;
+	// vector<vector<float> > hof;
 	vector<vector<float> > mbh;
 	obj.clear();
-	trj.clear();
-	hog.clear();
-	hof.clear();
+	// trj.clear();
+	// hog.clear();
+	// hof.clear();
 	mbh.clear();
 
-	getDescriptorFromFile(descriptorFileName,&obj,&trj,&hog,&hof,&mbh);
+	//getDescriptorFromFile(descriptorFileName,&obj,&trj,&hog,&hof,&mbh);
+	getDescriptorFromFile(descriptorFileName,&obj,&mbh);
 	sort(obj.begin(), obj.end());
 	
 	set<int> uniqueObj (obj.begin(),obj.end());
 	int frames = uniqueObj.size();
 
-	float **fv_trj = new float* [frames];
-	float **fv_hog = new float* [frames];
-	float **fv_hof = new float* [frames];
+	// float **fv_trj = new float* [frames];
+	// float **fv_hog = new float* [frames];
+	// float **fv_hof = new float* [frames];
 	float **fv_mbh = new float* [frames];
 	for (size_t i = 0; i < frames; i++) {
-		fv_trj[i] = new float[(int)(2*pcaFactor*TRJ_DI*gmmSize)];
-		fv_hog[i] = new float[(int)(2*pcaFactor*HOG_DI*gmmSize)];
-		fv_hof[i] = new float[(int)(2*pcaFactor*HOF_DI*gmmSize)];
+		// fv_trj[i] = new float[(int)(2*pcaFactor*TRJ_DI*gmmSize)];
+		// fv_hog[i] = new float[(int)(2*pcaFactor*HOG_DI*gmmSize)];
+		// fv_hof[i] = new float[(int)(2*pcaFactor*HOF_DI*gmmSize)];
 		fv_mbh[i] = new float[(int)(2*pcaFactor*MBH_DI*gmmSize)];
 	}
 
@@ -278,21 +282,21 @@ void getAndSaveFV (char *descriptorFileName, int gmmSize, float * Trjmeans, floa
 		tempb = startindex-1;
 		numDataToEncode = tempb-tempa+1;
 		
-		void * encTrj = vl_malloc(sizeof(float) * 2 *pcaFactor* TRJ_DI *gmmSize);
-		float *reducedTRJData = computPCAandReduce(&trj,tempa,TRJ_DI,numDataToEncode,pcaFactor);
-		getRealFV(encTrj,fv_trj,indexLineofFisher,reducedTRJData,Trjmeans,pcaFactor*TRJ_DI,gmmSize,Trjcovariances,Trjpriors,numDataToEncode);
+		// void * encTrj = vl_malloc(sizeof(float) * 2 *pcaFactor* TRJ_DI *gmmSize);
+		// float *reducedTRJData = computPCAandReduce(&trj,tempa,TRJ_DI,numDataToEncode,pcaFactor);
+		// getRealFV(encTrj,fv_trj,indexLineofFisher,reducedTRJData,Trjmeans,pcaFactor*TRJ_DI,gmmSize,Trjcovariances,Trjpriors,numDataToEncode);
 		
-		encTrj = vl_malloc(sizeof(float) * 2 *pcaFactor* HOG_DI *gmmSize);
-		reducedTRJData = computPCAandReduce(&hog,tempa,HOG_DI,numDataToEncode,pcaFactor);
+		// encTrj = vl_malloc(sizeof(float) * 2 *pcaFactor* HOG_DI *gmmSize);
+		// reducedTRJData = computPCAandReduce(&hog,tempa,HOG_DI,numDataToEncode,pcaFactor);
 		
-		getRealFV(encTrj,fv_hog,indexLineofFisher,reducedTRJData,Hogmeans,pcaFactor*HOG_DI,gmmSize,Hogcovariances,Hogpriors,numDataToEncode);
+		// getRealFV(encTrj,fv_hog,indexLineofFisher,reducedTRJData,Hogmeans,pcaFactor*HOG_DI,gmmSize,Hogcovariances,Hogpriors,numDataToEncode);
 	
-		encTrj = vl_malloc(sizeof(float) * 2 *pcaFactor* HOF_DI *gmmSize);
-		reducedTRJData = computPCAandReduce(&hof,tempa,HOF_DI,numDataToEncode,pcaFactor);
-		getRealFV(encTrj,fv_hof,indexLineofFisher,reducedTRJData,Hofmeans,pcaFactor*HOF_DI,gmmSize,Hofcovariances,Hofpriors,numDataToEncode);
+		// encTrj = vl_malloc(sizeof(float) * 2 *pcaFactor* HOF_DI *gmmSize);
+		// reducedTRJData = computPCAandReduce(&hof,tempa,HOF_DI,numDataToEncode,pcaFactor);
+		// getRealFV(encTrj,fv_hof,indexLineofFisher,reducedTRJData,Hofmeans,pcaFactor*HOF_DI,gmmSize,Hofcovariances,Hofpriors,numDataToEncode);
 		
-		encTrj = vl_malloc(sizeof(float) * 2 *pcaFactor* MBH_DI *gmmSize);
-		reducedTRJData = computPCAandReduce(&mbh,tempa,MBH_DI,numDataToEncode,pcaFactor);
+		void * encTrj = vl_malloc(sizeof(float) * 2 *pcaFactor* MBH_DI *gmmSize);
+		float * reducedTRJData = computPCAandReduce(&mbh,tempa,MBH_DI,numDataToEncode,pcaFactor);
 		getRealFV(encTrj,fv_mbh,indexLineofFisher,reducedTRJData,Mbhmeans,pcaFactor*MBH_DI,gmmSize,Mbhcovariances,Mbhpriors,numDataToEncode);
 
 		indexLineofFisher++;
@@ -300,9 +304,9 @@ void getAndSaveFV (char *descriptorFileName, int gmmSize, float * Trjmeans, floa
 		delete reducedTRJData;
 	}
 	//cout<<" frames is "<<frames <<" ******************and indexLineofFisher "<<indexLineofFisher<<endl;
-	saveFisherVectorToFile(fv_trj,frames,(int)(2*pcaFactor*TRJ_DI*gmmSize),feat_trj_fv_file);
-	saveFisherVectorToFile(fv_hog,frames,(int)(2*pcaFactor*HOG_DI*gmmSize),feat_hof_fv_file);
-	saveFisherVectorToFile(fv_hof,frames,(int)(2*pcaFactor*HOF_DI*gmmSize),feat_hog_fv_file);
+	// saveFisherVectorToFile(fv_trj,frames,(int)(2*pcaFactor*TRJ_DI*gmmSize),feat_trj_fv_file);
+	// saveFisherVectorToFile(fv_hog,frames,(int)(2*pcaFactor*HOG_DI*gmmSize),feat_hof_fv_file);
+	// saveFisherVectorToFile(fv_hof,frames,(int)(2*pcaFactor*HOF_DI*gmmSize),feat_hog_fv_file);
 	saveFisherVectorToFile(fv_mbh,frames,(int)(2*pcaFactor*MBH_DI*gmmSize),feat_mbh_fv_file);
 }
 
@@ -315,52 +319,52 @@ int main(int argc, char const *argv[]) {
 	cout<<"start to generate fisher vector"<<endl;
 
 	char *feat_file_path  = new char[100];
-	char *feat_trj_fv_file = new char[100];
-	char *feat_hog_fv_file = new char[100];
-	char *feat_hof_fv_file = new char[100];
+	// char *feat_trj_fv_file = new char[100];
+	// char *feat_hog_fv_file = new char[100];
+	// char *feat_hof_fv_file = new char[100];
 	char *feat_mbh_fv_file = new char[100];
 
 	char *descriptorFilePath = new char[100];
 	char *descriptorFileName = new char[100];
 
-	char *gmmMeansTrjFileName = new char[100];
-	strcpy(gmmMeansTrjFileName, gmmMeansTrj);
-	char *gmmCovariancesTrjFileName = new char[100];
-	strcpy(gmmCovariancesTrjFileName, gmmCovariancesTrj);
-	char *gmmPriorsTrjFileName = new char[100];
-	strcpy(gmmPriorsTrjFileName, gmmPriorsTrj);
-	float * Trjmeans = new float[gmmSize*TRJ_DI];
-	float * Trjcovariances = new float[gmmSize*TRJ_DI];
-	float * Trjpriors = new float[gmmSize];
-	readGmmFromFile(Trjmeans,gmmMeansTrjFileName);
-	readGmmFromFile(Trjcovariances,gmmCovariancesTrjFileName);
-	readGmmFromFile(Trjpriors,gmmPriorsTrjFileName);
+	// char *gmmMeansTrjFileName = new char[100];
+	// strcpy(gmmMeansTrjFileName, gmmMeansTrj);
+	// char *gmmCovariancesTrjFileName = new char[100];
+	// strcpy(gmmCovariancesTrjFileName, gmmCovariancesTrj);
+	// char *gmmPriorsTrjFileName = new char[100];
+	// strcpy(gmmPriorsTrjFileName, gmmPriorsTrj);
+	// float * Trjmeans = new float[gmmSize*TRJ_DI];
+	// float * Trjcovariances = new float[gmmSize*TRJ_DI];
+	// float * Trjpriors = new float[gmmSize];
+	// readGmmFromFile(Trjmeans,gmmMeansTrjFileName);
+	// readGmmFromFile(Trjcovariances,gmmCovariancesTrjFileName);
+	// readGmmFromFile(Trjpriors,gmmPriorsTrjFileName);
 
-	char *gmmMeansHogFileName = new char[100];
-	strcpy(gmmMeansHogFileName, gmmMeansHog);
-	char *gmmCovariancesHogFileName = new char[100];
-	strcpy(gmmCovariancesHogFileName, gmmCovariancesHog);
-	char *gmmPriorsHogFileName = new char[100];
-	strcpy(gmmPriorsHogFileName, gmmPriorsHog);
-	float * Hogmeans = new float[gmmSize*HOG_DI];
-	float * Hogcovariances = new float[gmmSize*HOG_DI];
-	float * Hogpriors = new float[gmmSize];
-	readGmmFromFile(Hogmeans,gmmMeansHogFileName);
-	readGmmFromFile(Hogcovariances,gmmCovariancesHogFileName);
-	readGmmFromFile(Hogpriors,gmmPriorsHogFileName);
+	// char *gmmMeansHogFileName = new char[100];
+	// strcpy(gmmMeansHogFileName, gmmMeansHog);
+	// char *gmmCovariancesHogFileName = new char[100];
+	// strcpy(gmmCovariancesHogFileName, gmmCovariancesHog);
+	// char *gmmPriorsHogFileName = new char[100];
+	// strcpy(gmmPriorsHogFileName, gmmPriorsHog);
+	// float * Hogmeans = new float[gmmSize*HOG_DI];
+	// float * Hogcovariances = new float[gmmSize*HOG_DI];
+	// float * Hogpriors = new float[gmmSize];
+	// readGmmFromFile(Hogmeans,gmmMeansHogFileName);
+	// readGmmFromFile(Hogcovariances,gmmCovariancesHogFileName);
+	// readGmmFromFile(Hogpriors,gmmPriorsHogFileName);
 
-	char *gmmMeansHofFileName = new char[100];
-	strcpy(gmmMeansHofFileName, gmmMeansHof);
-	char *gmmCovariancesHofFileName = new char[100];
-	strcpy(gmmCovariancesHofFileName, gmmCovariancesHof);
-	char *gmmPriorsHofFileName = new char[100];
-	strcpy(gmmPriorsHofFileName, gmmPriorsHof);
-	float * Hofmeans = new float[gmmSize*HOF_DI];
-	float * Hofcovariances = new float[gmmSize*HOF_DI];
-	float * Hofpriors = new float[gmmSize];
-	readGmmFromFile(Hofmeans,gmmMeansHofFileName);
-	readGmmFromFile(Hofcovariances,gmmCovariancesHofFileName);
-	readGmmFromFile(Hofpriors,gmmPriorsHofFileName);
+	// char *gmmMeansHofFileName = new char[100];
+	// strcpy(gmmMeansHofFileName, gmmMeansHof);
+	// char *gmmCovariancesHofFileName = new char[100];
+	// strcpy(gmmCovariancesHofFileName, gmmCovariancesHof);
+	// char *gmmPriorsHofFileName = new char[100];
+	// strcpy(gmmPriorsHofFileName, gmmPriorsHof);
+	// float * Hofmeans = new float[gmmSize*HOF_DI];
+	// float * Hofcovariances = new float[gmmSize*HOF_DI];
+	// float * Hofpriors = new float[gmmSize];
+	// readGmmFromFile(Hofmeans,gmmMeansHofFileName);
+	// readGmmFromFile(Hofcovariances,gmmCovariancesHofFileName);
+	// readGmmFromFile(Hofpriors,gmmPriorsHofFileName);
 
 	char *gmmMeansMbhFileName = new char[100];
 	strcpy(gmmMeansMbhFileName, gmmMeansMbh);
@@ -377,14 +381,14 @@ int main(int argc, char const *argv[]) {
 
 	
 	for (size_t i = 0; i < num_videos; i++) {
-		strcpy(feat_file_path,featDir);
-		strcpy(feat_trj_fv_file,strcat(strcat(strcat(feat_file_path,"trj/"),basename(fullvideoname[i])),"-fv"));
+		// strcpy(feat_file_path,featDir);
+		// strcpy(feat_trj_fv_file,strcat(strcat(strcat(feat_file_path,"trj/"),basename(fullvideoname[i])),"-fv"));
 
-		strcpy(feat_file_path,featDir);
-		strcpy(feat_hof_fv_file,strcat(strcat(strcat(feat_file_path,"hof/"),basename(fullvideoname[i])),"-fv"));
+		// strcpy(feat_file_path,featDir);
+		// strcpy(feat_hof_fv_file,strcat(strcat(strcat(feat_file_path,"hof/"),basename(fullvideoname[i])),"-fv"));
 
-		strcpy(feat_file_path,featDir);
-		strcpy(feat_hog_fv_file,strcat(strcat(strcat(feat_file_path,"hog/"),basename(fullvideoname[i])),"-fv"));
+		// strcpy(feat_file_path,featDir);
+		// strcpy(feat_hog_fv_file,strcat(strcat(strcat(feat_file_path,"hog/"),basename(fullvideoname[i])),"-fv"));
 
 		strcpy(feat_file_path,featDir);
 		strcpy(feat_mbh_fv_file,strcat(strcat(strcat(feat_file_path,"mbh/"),basename(fullvideoname[i])),"-fv"));
@@ -394,44 +398,48 @@ int main(int argc, char const *argv[]) {
 
 		cout<<descriptorFileName<<endl;
 
-		getAndSaveFV(descriptorFileName, gmmSize,Trjmeans, Trjcovariances, Trjpriors, Hogmeans, Hogcovariances,
-			Hogpriors, Hofmeans, Hofcovariances, Hofpriors, Mbhmeans, Mbhcovariances, Mbhpriors,  feat_trj_fv_file,
-		    feat_hof_fv_file,feat_hog_fv_file,feat_mbh_fv_file);
+		// getAndSaveFV(descriptorFileName, gmmSize,Trjmeans, Trjcovariances, Trjpriors, Hogmeans, Hogcovariances,
+		// 	Hogpriors, Hofmeans, Hofcovariances, Hofpriors, Mbhmeans, Mbhcovariances, Mbhpriors,  feat_trj_fv_file,
+		//     feat_hof_fv_file,feat_hog_fv_file,feat_mbh_fv_file);
+		getAndSaveFV(descriptorFileName, gmmSize,Mbhmeans, Mbhcovariances, Mbhpriors, feat_mbh_fv_file);
 	}
 
 	releaseFullVideoName(fullvideoname);
 
 	delete [] feat_file_path;
-	delete [] feat_trj_fv_file;
-	delete [] feat_hog_fv_file;
-	delete [] feat_hof_fv_file;
+	// delete [] feat_trj_fv_file;
+	// delete [] feat_hog_fv_file;
+	// delete [] feat_hof_fv_file;
 	delete [] feat_mbh_fv_file;
 	delete [] descriptorFilePath;
 	delete [] descriptorFileName;
 
 
-	delete [] gmmMeansTrjFileName;
-	delete [] gmmCovariancesTrjFileName;
-	delete [] gmmPriorsTrjFileName;
-	delete [] Trjmeans;
-	delete [] Trjcovariances;
-	delete [] Trjpriors;
+	// delete [] gmmMeansTrjFileName;
+	// delete [] gmmCovariancesTrjFileName;
+	// delete [] gmmPriorsTrjFileName;
+	// delete [] Trjmeans;
+	// delete [] Trjcovariances;
+	// delete [] Trjpriors;
 
-	delete [] gmmMeansHogFileName;
-	delete [] gmmCovariancesHogFileName;
-	delete [] gmmPriorsHogFileName;
-	delete [] Hogmeans;
-	delete [] Hogcovariances;
-	delete [] Hogpriors;
+	// delete [] gmmMeansHogFileName;
+	// delete [] gmmCovariancesHogFileName;
+	// delete [] gmmPriorsHogFileName;
+	// delete [] Hogmeans;
+	// delete [] Hogcovariances;
+	// delete [] Hogpriors;
 
 
 
-	delete [] gmmMeansHofFileName;
-	delete [] gmmCovariancesHofFileName;
-	delete [] gmmPriorsHofFileName;
-	delete [] Hofmeans;
-	delete [] Hofcovariances;
-	delete [] Hofpriors;
+	// delete [] gmmMeansHofFileName;
+	// delete [] gmmCovariancesHofFileName;
+	// delete [] gmmPriorsHofFileName;
+	// delete [] Hofmeans;
+	// delete [] Hofcovariances;
+	// delete [] Hofpriors;
+
+
+
 	delete [] gmmMeansMbhFileName;
 	delete [] gmmCovariancesMbhFileName;
 	delete [] gmmPriorsMbhFileName;

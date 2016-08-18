@@ -85,6 +85,7 @@ static char *sampledmbhFeatureAllData = "../../../remote/Data/Vocab/mbhAll";
 static char tempStyeStart[filePathSize] = "../../../remote/Hollywood2/AVIClips/actioncliptrain";
 static char tempStyeStart2[filePathSize] = "../../../remote/Hollywood2/AVIClips/actioncliptest";
 
+static char *trainAndTestFilePath = "../../../remote/Data/feats/matrix/mbh";
 
 static char *darwin_feature = "../../../remote/Data/feats/w/";
 
@@ -92,9 +93,9 @@ static char *darwin_feature = "../../../remote/Data/feats/w/";
 static char *feature_out = "../../../remote/Data/feats/hof/";
 const int DIMENSION = HOF_DI*gmmSize; // use trj as feature out...
 
-static int trainNum = 2;
-static int testNum = 2;
-static int num_videos = 9;
+static int trainNum = 823;
+static int testNum = 884;
+static int num_videos = 1707;
 //=========================================================================================//
 const int darwinDimension = 2*DIMENSION;
 static char *accuracyFile = "../accuracyFile";

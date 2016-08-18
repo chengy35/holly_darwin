@@ -10,7 +10,7 @@ lib: svm.o
 	$(CXX) $${SHARED_LIB_FLAG} svm.o -o libsvm.so.$(SHVER)
 
 trainAndTest: trainAndTest.cpp svm.o
-	$(CXX) $(CFLAGS) trainAndTest.cpp svm.o -o trainAndTest -lm -lstdc++ -I ../ 
+	$(CXX) $(CFLAGS) trainAndTest.cpp svm.o -o trainAndTest -w -lm -lstdc++ -I ../ 
 
 svm.o: svm.cpp svm.h
 	$(CXX) $(CFLAGS) -c svm.cpp

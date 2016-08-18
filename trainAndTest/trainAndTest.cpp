@@ -125,7 +125,6 @@ void trainAndClassify(float **trainData,int Dimen,int **classlabel, int trainNum
         prob.x = Malloc(struct svm_node *,prob.l);
         x_space = Malloc(struct svm_node,elements);
 
-
         j = 0;
         for(i=0;i<prob.l;i++)
         {
@@ -187,60 +186,54 @@ void trainAndClassify(float **trainData,int Dimen,int **classlabel, int trainNum
     file.close();
     delete []accuracy;
 }
-
+void ReadtrainAndTestFilePath(float ** trainData, float ** testData)
+{
+    ifstream file(trainAndTestFilePath);
+    for (int i = 0; i < trainNum; ++i)
+    {
+        for (int j = 1; j <= trainNum ; ++j)
+        {
+            file >> trainData[i][j];
+        }
+    }
+    for (int i = 0; i < testNum; ++i)
+    {
+        for (int j = 1; j <= trainNum ; ++j)
+        {
+            file >> testData[i][j];
+        }
+    }
+    file.close();
+}
 int main(int argc, char const *argv[])
 {
     char **fullvideoname = getFullVideoName();
-    
-    char *wFilePath = new char[filePathSize]; 
 
-    float ** all_data_cell = new float*[num_videos];
-    for (int i = 0; i < num_videos ; ++i)
-    {
-        all_data_cell[i] = new float[darwinDimension];
-    }
-    for (int i = st; i < send ; ++i)
-    {
-        strcpy(wFilePath,darwin_feature);
-        strcat(wFilePath,basename(fullvideoname[i]));
-        strcat(wFilePath,"-w");
-       
-        readDarWinfromFile(wFilePath,all_data_cell,i);
-    }
     max_iline_len = 1024;
     iline = Malloc(char,max_iline_len);
     
     int ** classid = readLabelFromFile();
     //saveData(classid,"./classid",datasetSize,actionType);
-    darWinNormalizedL2(all_data_cell, num_videos, darwinDimension);
    
     float ** trainData = new float*[trainNum];
     for (int i = 0; i < trainNum; ++i)
     {
-        trainData[i] = new float[darwinDimension];
-        for (int j = 0; j < darwinDimension; ++j)
-        {
-            trainData[i][j] = all_data_cell[i][j];
-        }
+        trainData[i] = new float[trainNum+1];
+        trainData[i][0] = i+1;
     }   
-   
     float ** testData = new float*[testNum];
     for (int i = 0; i < testNum; ++i)
     {
-        testData[i] = new float[darwinDimension];
-        for (int j = 0; j < darwinDimension; ++j)
-        {
-            testData[i][j] = all_data_cell[i+trainNum][j];
-        }
+        testData[i] = new float[trainNum+1];
+        testData[i][0] = i+1;
     }
+    ReadtrainAndTestFilePath(trainData,testData);
 
-    for (int i = 0; i < num_videos; ++i)
-    {
-        delete [] all_data_cell[i];
-    }
-    delete [] all_data_cell;
+    darWinNormalizedL2(trainData, trainNum, trainNum+1);
+    darWinNormalizedL2(testData, testNum, trainNum+1);
 
-    trainAndClassify(trainData,darwinDimension,classid,trainNum, testData, testNum);
+
+    trainAndClassify(trainData,trainNum+1,classid,trainNum, testData, testNum);
 
     releaseFullVideoName(fullvideoname);
 
@@ -256,7 +249,6 @@ int main(int argc, char const *argv[])
     }
     delete []testData;
     
-    delete []wFilePath;
     return 0;
 }
 

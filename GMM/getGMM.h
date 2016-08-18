@@ -34,7 +34,7 @@ void getAndSaveGmmModel(char *fileName, int dimension)
 {
 	cout<<"save"<<fileName<<endl; //feature
 	char *command = new char[200];
-	strcpy(command,"./debug/vlgmm ");
+	strcpy(command,"./vl_gmm/vlgmm ");
     char *c = new char[20];
     int length = sprintf(c," %d",dimension);
     strcat(command,fileName);
