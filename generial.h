@@ -90,8 +90,8 @@ static char *trainAndTestFilePath = "../../../remote/Data/feats/matrix/mbh";
 static char *darwin_feature = "../../../remote/Data/feats/w/";
 
 //==========================if you want to use other feature===============================//
-static char *feature_out = "../../../remote/Data/feats/hof/";
-const int DIMENSION = HOF_DI*gmmSize; // use trj as feature out...
+static char *feature_out = "../../../remote/Data/feats/mbh/";
+const int DIMENSION = MBH_DI*gmmSize; // use trj as feature out...
 
 static int trainNum = 823;
 static int testNum = 884;
