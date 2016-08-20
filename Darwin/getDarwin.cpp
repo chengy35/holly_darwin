@@ -103,18 +103,17 @@ void saveData(float ** Data,int frames)
 }
 void saveResult(float * w_fow,float *w_ref,char *filename)
 {
-    //cout<<filename<<endl;
-    ofstream file(filename);
-    for (int j = 0; j < DIMENSION; ++j)
-    {
-           file<<w_fow[j]<<" ";
-    }
-    for (int j = 0; j < DIMENSION; ++j)
-    {
-           file<<w_ref[j]<<" ";
-    }
-    file<<endl;
-    file.close();
+	    ofstream file(filename);
+	    for (int j = 0; j < DIMENSION; ++j)
+	    {
+	           file<<w_fow[j]<<" ";
+	    }
+	    for (int j = 0; j < DIMENSION; ++j)
+	    {
+	           file<<w_ref[j]<<" ";
+	    }
+	    file<<endl;
+	    file.close();
 }
 float * liblineaqrsvr(float ** Data,int frames)
 {
@@ -250,7 +249,7 @@ int main(int argc, char const *argv[])
     char *fvFilePath = new char[100];
 
     int i;
-    for ( i = st; i < send ; ++i)
+    for ( i = 0; i < num_videos ; ++i)
     {
         // read fv file to get Origin Data
         strcpy(fvFilePath,feature_out);
@@ -262,6 +261,13 @@ int main(int argc, char const *argv[])
         strcat(wFilePath,"-w");
 
         cout<<fvFilePath<<endl;
+		ifstream ifs(wFilePath);
+		if(ifs)
+		{
+			cout<<wFilePath<<" exist!"<<endl;
+			ifs.close();
+			continue;
+		}
         int frames = readLineFromFile(fvFilePath);
         float ** data = new float*[frames];
         //cout<<frames<<" is its lines"<<endl;

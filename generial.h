@@ -85,22 +85,25 @@ static char *sampledmbhFeatureAllData = "../../../remote/Data/Vocab/mbhAll";
 static char tempStyeStart[filePathSize] = "../../../remote/Hollywood2/AVIClips/actioncliptrain";
 static char tempStyeStart2[filePathSize] = "../../../remote/Hollywood2/AVIClips/actioncliptest";
 
+static char *trainAndTestFilePath = "../../../remote/Data/feats/matrix/mbh";
 
 static char *darwin_feature = "../../../remote/Data/feats/w/";
 
 //==========================if you want to use other feature===============================//
-static char *feature_out = "../../../remote/Data/feats/hof/";
-const int DIMENSION = HOF_DI*gmmSize; // use trj as feature out...
+static char *feature_out = "../../../remote/Data/feats/mbh/";
+const int DIMENSION = MBH_DI*gmmSize; // use trj as feature out...
 
-static int trainNum = 2;
-static int testNum = 2;
-static int st = 0;
-static int send = 4;
+static int trainNum = 823;
+static int testNum = 884;
+static int num_videos = 1707;
 //=========================================================================================//
 const int darwinDimension = 2*DIMENSION;
 static char *accuracyFile = "../accuracyFile";
 
-static int num_videos = send;
+
+
+static int C[11] = {-5,  -3, -1, 1, 3, 5, 7, 9, 11, 13, 15};
+static int cChoice = 11;
 
 //to make svm salient.
 void print_null(const char *s) {}
