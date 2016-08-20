@@ -38,7 +38,7 @@ void saveTrainAndTestFile(char * fileName, float**resultTrainData, float** resul
 		out<<i+1<<" ";
 		for (int j = 0; j < trainSize; ++j)
 		{
-			out<<resultTestData[i][j]<<" ";
+		    out<<resultTestData[i][j]<<" ";
 		}
 		out<<endl;
 	}
@@ -103,6 +103,7 @@ int main(int argc, char const *argv[])
 	for (int s = 0; s < trainSize; ++s)
 	{
 		//cout<<s<<" read trainfile"<<endl;
+		cout<<s<<" read trainfile"<<endl;
 		readWFromFile(trainVideoName[s],trainW,s);	
 		
 	}
@@ -111,6 +112,8 @@ int main(int argc, char const *argv[])
 	for (int s = 0; s < testSize; ++s)
 	{
 		//cout<<s<<" read testFile"<<endl;
+		readWFromFile(testVideoName[s],testW,s);	
+		cout<<s<<" read testFile"<<endl;
 		readWFromFile(testVideoName[s],testW,s);	
 	}
 	
@@ -143,7 +146,6 @@ int main(int argc, char const *argv[])
 			floatTrainData[i][j] = CV_MAT_ELEM(* resultTrainData,float,i,j);
 		}
 	}
-		
 	float ** floatTestData = new float*[testSize];
 	for (int i = 0; i < testSize; ++i)
 	{

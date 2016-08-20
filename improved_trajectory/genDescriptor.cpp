@@ -2,7 +2,7 @@
 int main(int argc, char const *argv[])
 {
 	char **fullvideoname = getFullVideoName();
-	genDescriptors(st,send,fullvideoname,descriptor_path);
+	genDescriptors(0,num_videos,fullvideoname,descriptor_path);
 	releaseFullVideoName(fullvideoname);
 	return 0;
 }

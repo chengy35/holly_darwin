@@ -67,9 +67,9 @@ void initiateParam()
     
 // default values
     param.svm_type = C_SVC;
-    param.kernel_type = PRECOMPUTED;
+    param.kernel_type = PRECOMPUTED; ========================
     param.degree = 3;
-    param.gamma = 1.0/(trainNum+1);  
+    param.gamma = 1.0/(darwinDimension);  
     param.coef0 = 0;
     param.nu = 0.5;
     param.cache_size = 100;
@@ -111,12 +111,11 @@ double CrossValidation(int nFolds)
     delete target;
     return best_C;
 }
-void trainAndClassify(float **trainData,int Dimen,int **classlabel, int trainNum, float **testData, int testNum)
+void trainAndClassify(float **trainData,int Dimen,int *trainclasslabel, int *testclasslabel,int trainNum, float **testData, int testNum)
 {
     double  *accuracy = new double[actionType];
     for (int k = 0; k < actionType ; ++k)
     {
-        cout<<k<<" ==============================="<<endl;
         //read_problem
         prob.l = trainNum;
         size_t elements = trainNum*(Dimen+1);
@@ -129,7 +128,7 @@ void trainAndClassify(float **trainData,int Dimen,int **classlabel, int trainNum
         j = 0;
         for(i=0;i<prob.l;i++)
         {
-            prob.y[i] = classlabel[i][k];
+            prob.y[i] = trainclasslabel[i];
             prob.x[i] = &x_space[j];
             for (int s = 0; s < Dimen; ++s)
             {
@@ -141,11 +140,11 @@ void trainAndClassify(float **trainData,int Dimen,int **classlabel, int trainNum
             x_space[j++].index = -1;
         }
         
-        print_func = &print_null;
-        svm_set_print_string_function(print_func);
-        double best_C = CrossValidation(5); // five-fold cross validation.
+        double best_C = CrossValidation(5);
         initiateParam();
         param.C = best_C;
+        print_func = &print_null;
+        svm_set_print_string_function(print_func);
         //cout<<" before training "<<endl;
         model = svm_train(&prob,&param);
         //cout<<" after training "<<endl;
@@ -162,7 +161,7 @@ void trainAndClassify(float **trainData,int Dimen,int **classlabel, int trainNum
             }
             x[s].index = -1;
             predict_label = svm_predict(model,x);
-            if(predict_label == classlabel[i+trainNum][k]) //need to change ............===============================
+            if(predict_label == testclasslabel[i]) //need to change ............===============================
                 ++correct;
         }
         svm_free_and_destroy_model(&model);
@@ -182,74 +181,47 @@ void trainAndClassify(float **trainData,int Dimen,int **classlabel, int trainNum
         sum += accuracy[i];
         file << accuracy[i]<<" ";
     }
-    file << endl << " The average accuracy is ";
+    file << endl << "The average accuracy is ";
     file << sum/actionType << endl;
     file.close();
     delete []accuracy;
 }
-void ReadtrainAndTestFilePath(float ** trainData, float ** testData)
+float ** readTrainFromFile(char * filename, int trainNum, int darwinDimension)
 {
-    ifstream file(trainAndTestFilePath);
+    float ** trainData = new float*[trainNum];
+    ifstream file(filename);
     for (int i = 0; i < trainNum; ++i)
     {
-        for (int j = 1; j <= trainNum ; ++j)
+        trainData[i] = new float[darwinDimension];
+        for (int j= 0; j < darwinDimension; ++j)
         {
             file >> trainData[i][j];
         }
     }
+    file.close();
+    return trainData;
+}
+int * readLabelFromFile(char *filename, int testNum)
+{
+    ifstream file(filename);
+    int *label = new int[testNum];
     for (int i = 0; i < testNum; ++i)
     {
-        for (int j = 1; j <= trainNum ; ++j)
-        {
-            file >> testData[i][j];
-        }
+        file >> label[i];
     }
     file.close();
+    return label;
 }
 int main(int argc, char const *argv[])
 {
-    char **fullvideoname = getFullVideoName();
 
-    max_iline_len = 1024;
-    iline = Malloc(char,max_iline_len);
-    
-    int ** classid = readLabelFromFile();
-    //saveData(classid,"./classid",datasetSize,actionType);
-   
-    float ** trainData = new float*[trainNum];
-    for (int i = 0; i < trainNum; ++i)
-    {
-        trainData[i] = new float[trainNum+1];
-        trainData[i][0] = i+1;
-    }
-    float ** testData = new float*[testNum];
-    for (int i = 0; i < testNum; ++i)
-    {
-        testData[i] = new float[trainNum+1];
-        testData[i][0] = i+1;
-    }
-    ReadtrainAndTestFilePath(trainData,testData);
-
-    darWinNormalizedL2(trainData, trainNum, trainNum+1);
-    darWinNormalizedL2(testData, testNum, trainNum+1);
-
-
-    trainAndClassify(trainData,trainNum+1,classid,trainNum, testData, testNum);
-
-    releaseFullVideoName(fullvideoname);
-
-    for (int i = 0; i < trainNum; ++i)
-    {
-        delete [] trainData[i];
-    }
-    delete []trainData;
-
-    for (int i = 0; i < trainNum; ++i)
-    {
-        delete [] testData[i];
-    }
-    delete []testData;
-    free(iline);
+    int trainNum = 5;
+    int darwinDimension = 6;
+    float ** trainData = readTrainFromFile("./train",trainNum,darwinDimension);
+    float ** testData = readTrainFromFile("./test",trainNum,darwinDimension);
+    int *trainLabel = readLabelFromFile("./trainlabel",trainNum);
+    int *testLabel = readLabelFromFile("./testlabel",trainNum);
+    trainAndClassify(trainData,darwinDimension,trainLabel,testLabel,trainNum, testData, testNum);
     return 0;
 }
 
