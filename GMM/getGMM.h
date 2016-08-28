@@ -5,6 +5,8 @@
 using namespace cv;
 using namespace std;
 
+int gmm_num_videos = 823;
+
 void saveDatatoFile(float ** trjAllData, int num,int dimension, char *filepath)
 {
 	ofstream file(filepath);
@@ -245,7 +247,6 @@ void saveTrj(vector<vector <float > > *trj,char *fileName)
 
 void getGMM(char **fullvideoname,char * vocabsDir, char * descriptor_path)
 {
-
 			float **trjAll = new float *[samples];
 			float **hogAll = new float *[samples];
 			float **hofAll = new float *[samples];
@@ -259,12 +260,12 @@ void getGMM(char **fullvideoname,char * vocabsDir, char * descriptor_path)
 			}
 
 			int st = 0,send=0; //startindex, endindex.
-			int num_samples_per_vid = round(samples / num_videos);
+			int num_samples_per_vid = round(samples / gmm_num_videos);
 			vector<vector<float> > trj;
 			vector<vector<float> > hog;
 			vector<vector<float> > hof;
 			vector<vector<float> > mbh;
-			for (int i = 0; i < num_videos; ++i)
+			for (int i = 0; i < gmm_num_videos; ++i)
 			{
 				hog.clear();
 				hof.clear();
