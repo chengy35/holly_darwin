@@ -1,3 +1,7 @@
+=== creating dependency file: .build_debug/process.l ===
+make/dep.py "debug/process" .build_debug/process.l .build_debug .build_debug/process.d  > .build_debug/process.l
+=== linking: debug/process ===
+g++ -L/usr/local/lib -pipe -Wall -w -ggdb -o debug/process .build_debug/process.o -lboost_program_options -lboost_regex -lboost_system -lboost_filesystem -lopencv_core -lopencv_imgproc -lopencv_video -lopencv_nonfree -lopencv_features2d -lopencv_flann -lopencv_calib3d -lopencv_objdetect -lopencv_legacy -lopencv_highgui -lavformat -lavutil -lavcodec -lswscale -lz
 === done ===
 0 read trainfile
 1 read trainfile
