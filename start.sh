@@ -11,10 +11,10 @@ cd ..
 cd Darwin
 bash run.sh
 cd ..
-cd process
-bash run.sh
-cd ..
-cd trainAndTest
-bash run.sh
-cd ..
 
+#cd process
+#bash run.sh
+#cd ..
+#cd trainAndTest
+#bash run.sh
+#cd ..
