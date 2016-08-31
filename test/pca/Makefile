@@ -1,5 +1,5 @@
 # set the binaries that have to be built
-TARGETS := process
+TARGETS := killpca
 
 # set the build configuration set
 #BUILD := release
@@ -14,11 +14,9 @@ LDLIBS = $(addprefix -l, $(LIBS) $(LIBS_$(notdir $*)))
 LIBS := \
 	opencv_core opencv_imgproc opencv_video opencv_nonfree opencv_features2d opencv_flann opencv_calib3d opencv_objdetect opencv_legacy opencv_highgui \
 	avformat avutil avcodec swscale z
-#LIBS_hog2D := boost_python-mt
 
 # set some flags and compiler/linker specific commands
-CXXFLAGS = -w -pipe -D __STDC_CONSTANT_MACROS -D STD=std -Wall $(CXXFLAGS_$(BUILD)) -I. -I/usr/local/include -I ../
-CXXFLAGS_debug := -ggdb
+CXXFLAGS = -w -pipe -D __STDC_CONSTANT_MACROS -D STD=std -Wall $(CXXFLAGS_$(BUILD)) -I. -I/usr/local/include
 CXXFLAGS_release := -O3 -DNDEBUG -ggdb
 LDFLAGS = -L/usr/local/lib -pipe -Wall $(LDFLAGS_$(BUILD))
 LDFLAGS_debug := -w -ggdb

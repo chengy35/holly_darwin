@@ -134,9 +134,10 @@ int main(int argc, char const *argv[])
 	testData = cvCreateMat( testSize, darwinDimension, CV_32FC1);
 	resultTestData = cvCreateMat( testSize, trainSize, CV_32FC1);
 	cvInitMatHeader( testData, testSize, darwinDimension, CV_32FC1, testW);
+
 	cvMatMulAdd( testData, trainDataRev, 0, resultTestData);
-
-
+	cout<<"after mul ======================="<<endl;
+	
 	float ** floatTrainData = new float*[trainSize];
 	for (int i = 0; i < trainSize; ++i)
 	{

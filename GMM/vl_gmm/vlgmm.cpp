@@ -51,12 +51,11 @@ int main(int argc, char const *argv[])
 		data[i] = tempData[i];
 	}
 
-	int numClusters = 256;
 	int numData = tempData.size()/dimension;
 	// create a new instance of a GMM object for float data
 	//cout<<tempData.size()<<" is tempData's size"<<numData<<" is number of Data =================before gmm"<<endl;
 	
-	VlGMM *gmm = vl_gmm_new (VL_TYPE_FLOAT, dimension, numClusters) ;
+	VlGMM *gmm = vl_gmm_new (VL_TYPE_FLOAT, dimension, gmmSize) ;
 	// set the maximum number of EM iterations to 100
 	cout<<"==================generate gmm================="<<endl;
 	
@@ -79,13 +78,13 @@ int main(int argc, char const *argv[])
 	
 	char *temp = new char [strlen(filename)+50];// !!!!!!!!!!!!!!!!!!!!MEMORY COURPOTION....
 	strcpy(temp,filename);
-	saveTofile(means,dimension*numClusters,strcat(temp,".gmmmeans"));
+	saveTofile(means,dimension*gmmSize,strcat(temp,".gmmmeans"));
 	
 	strcpy(temp,filename);
-	saveTofile(covariances,dimension*numClusters,strcat(temp,".gmmcovariances"));
+	saveTofile(covariances,dimension*gmmSize,strcat(temp,".gmmcovariances"));
 	
 	strcpy(temp,filename);
-	saveTofile(priors,numClusters,strcat(temp,".gmmpriors"));
+	saveTofile(priors,gmmSize,strcat(temp,".gmmpriors"));
 	
 	vl_free(gmm);
 	delete [] data;

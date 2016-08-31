@@ -12,6 +12,74 @@ struct svm_node *x;
 
 using namespace std;
 
+struct node
+{
+    double m_score;
+    int No;
+};
+int comp(const void *a,const void *b)
+{
+    return (*(struct  node *)b).m_score >= (*(struct  node *)a).m_score;
+}
+double getAccuarcy(int *Testclassbel,double *score, int testSize)
+{
+    struct node arry[testSize];
+    int i;
+    for(i = 0; i < testSize;++i)
+    {
+        arry[i].m_score = score[i];
+        arry[i].No = i;
+    }
+    qsort(arry,testSize,sizeof(struct node),comp);
+
+    int p =0;
+    for ( i = 0; i < testSize; ++i)
+    {
+        if(Testclassbel[i] > 0 )
+        {
+            p++;
+        }
+    }
+    //cout<<p << " is p"<<endl;
+    int Testclassbel2[testSize];
+    for (int i = 0; i < testSize; ++i)
+    {
+        Testclassbel2[i] = Testclassbel[arry[i].No];
+    }
+    int tp[testSize+1];
+    int fp[testSize+1];
+    float recall[testSize+1] ;
+    int sel[testSize];
+    float precision[testSize+1] ;
+    tp[0] = 0;
+    recall[0] = 0;
+    precision[0] = 0;
+    int k = 0;
+    float small = 1e-10 ;
+    //cout<<" after init"<<endl;
+    for (int i = 0; i < testSize; ++i)
+    {
+        tp[i+1] = tp[i] + (Testclassbel2[i]> 0? 1:0);
+        fp[i+1] = fp[i] + (Testclassbel2[i]< 0? 1:0);
+    
+        precision[i+1]= (float) max((float)tp[i+1],small) / max((float)(tp[i+1]+fp[i+1]),small);
+    
+        recall[i+1] = (float)tp[i+1]/p;
+        if(i > 0)
+        {
+            if(recall[i] != recall[i-1])
+                sel[k++] = i;
+        }
+    }
+    //cout<<tp[testSize]<<" tp "<< fp[testSize]<<" fp"<<recall[testSize]<<" testSize"<<sel[testSize-1]<<" "<<endl;
+    float sum = 0;
+    for (int i = 0; i < k; ++i)
+    {
+        sum += precision[sel[i]];
+    }
+    return (double)(sum/p);
+}
+
 void saveData(int ** Data,char *filename,int frames, const int dim)
 {
     ofstream file(filename);
@@ -44,6 +112,7 @@ void readDarWinfromFile(char * fvFilePath, float **data, int index)
     file.close();
     return ;
 }
+
 void darWinNormalizedL2(float ** Data, int frames, int di)
 {
     float sum = 0;
@@ -149,10 +218,10 @@ void trainAndClassify(float **trainData,int Dimen,int **classlabel, int trainNum
         //cout<<" before training "<<endl;
         model = svm_train(&prob,&param);
         //cout<<" after training "<<endl;
-        int correct = 0;
-        int predict_label;
+
         int total = testNum;
         x = (struct svm_node *) malloc(Dimen*sizeof(struct svm_node));
+        double * dec_values = new double[testNum];
         for(i=0;i<testNum;i++)
         {
             for ( s = 0; s < Dimen; ++s)
@@ -161,17 +230,28 @@ void trainAndClassify(float **trainData,int Dimen,int **classlabel, int trainNum
                 x[s].value = testData[i][s];
             }
             x[s].index = -1;
-            predict_label = svm_predict(model,x);
-            if(predict_label == classlabel[i+trainNum][k]) //need to change ............===============================
-                ++correct;
+            svm_predict_values(model,x, dec_values); //////////////////////////////////////////not okay here , I can not stand it anymore.
+            //printf("%f\n", dec_values[0]*model->label[0]);
         }
+        int *TestclassLabel = new int[testNum];
+        //cout<<"============================"<<endl;
+        for (int s = 0; s < testNum; ++s)
+        {
+            TestclassLabel[s] = classlabel[s+trainNum][k];
+            //cout<<dec_values[s]<<" , ";
+        }
+       // cout<<endl;
+        //cout<<"============================"<<endl;
+        double tempaccuracy = getAccuarcy(TestclassLabel,dec_values,testNum);
+        delete TestclassLabel;
         svm_free_and_destroy_model(&model);
         svm_destroy_param(&param);
         free(prob.y);
         free(prob.x);
         free(x_space);
         free(x);
-        double tempaccuracy = (double)correct/total*100;
+        delete []dec_values;
+        
         accuracy[k] = tempaccuracy;
         //cout<<accuracy[k]<<" is accuracy for action "<<k<<endl;
     }

@@ -248,9 +248,7 @@ int main(int argc, char const *argv[])
    
     char *fvFilePath = new char[100];
 
-    int i;
-    for ( i = 0; i < num_videos ; ++i)
-    {
+        int i = 822;
         // read fv file to get Origin Data
         strcpy(fvFilePath,feature_out);
         strcat(fvFilePath,basename(fullvideoname[i]));
@@ -266,7 +264,7 @@ int main(int argc, char const *argv[])
 		{
 			cout<<wFilePath<<" exist!"<<endl;
 			ifs.close();
-			continue;
+			return -1;
 		}
         int frames = readLineFromFile(fvFilePath);
         float ** data = new float*[frames];
@@ -284,7 +282,7 @@ int main(int argc, char const *argv[])
             delete [] data[s] ;
         }
         delete []data;
-    }
+    
     delete []fvFilePath;
     delete []wFilePath;
     releaseFullVideoName(fullvideoname);

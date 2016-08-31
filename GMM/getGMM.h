@@ -309,9 +309,7 @@ void getGMM(char **fullvideoname,char * vocabsDir, char * descriptor_path)
 			float *hogData = computAndSavePCA(hogAll,HOG_DI,send,pcaFactor,&hogSize);
 			float *hofData = computAndSavePCA(hofAll,HOF_DI,send,pcaFactor,&hofSize);
 			float *mbhData = computAndSavePCA(mbhAll,MBH_DI,send,pcaFactor,&mbhSize);
-			// cout<<"trj size is "<<trjSize<<" trjSize/dimension is "<<trjSize/(TRJ_DI*pcaFactor)<<endl;
-			// cout<<"hog size is "<<hogSize<<" hogSIze/dimension is "<<hogSize/(HOG_DI*pcaFactor)<<endl;
-			// cout<<"hof size is "<<hofSize<<" hofSIze/dimension is "<<hofSize/(HOF_DI*pcaFactor)<<endl;
+		
 			// cout<<"mbh size is "<<mbhSize<<" mbhSIze/dimension is "<<mbhSize/(MBH_DI*pcaFactor)<<endl;
 
 			saveDatatoFile(trjData,trjSize,reducedPCADataoftrjALL);
@@ -341,11 +339,10 @@ void getGMM(char **fullvideoname,char * vocabsDir, char * descriptor_path)
 			delete []hogAll;
 			delete []hofAll;
 			delete []mbhAll;
-		
+			
 			getAndSaveGmmModel(reducedPCADataoftrjALL,(int)(TRJ_DI*pcaFactor));
 			getAndSaveGmmModel(reducedPCADataofhogALL,(int)(HOG_DI*pcaFactor));
 			getAndSaveGmmModel(reducedPCADataofhofALL,(int)(HOF_DI*pcaFactor));
 			getAndSaveGmmModel(reducedPCADataofmbhALL,(int)(MBH_DI*pcaFactor));
-	
 }
 #endif

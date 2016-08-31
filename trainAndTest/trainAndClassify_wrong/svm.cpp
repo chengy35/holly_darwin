@@ -2519,7 +2519,9 @@ double svm_predict_values(const svm_model *model, const svm_node *x, double* dec
 	}
 	else
 	{
+		
 		int nr_class = model->nr_class;
+		
 		int l = model->l;
 		
 		double *kvalue = Malloc(double,l);
