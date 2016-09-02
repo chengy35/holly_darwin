@@ -38,7 +38,7 @@ const int HOF_DI = 108;
 const int MBH_DI = 192;
 const int OBJ_DI = 10;
 
-const int samples = 1000000; // just for test.
+static int samples = 1000000; // just for test.
 
 const int gmmSize = 256;
 static char* iiline;
