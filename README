@@ -70,3 +70,8 @@ find /root -size -500K -size +50K -exec ls -ld {} \;
 
 查找 小于500K，大于50K的文件
 
+
+
+46% using ranking feature map ,sign*sqrt(abs), as classifier feature map
+now, using sqrt(virtual number), sqrt(virtual number).
+

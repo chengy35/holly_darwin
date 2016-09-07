@@ -205,8 +205,8 @@ char ** getFullVideoName()
 {
 	char *resultStart = new char[filePathSize];
 	char *resultStart2 = new char[filePathSize];
-	char tempStyeStart[filePathSize] = "../../remote/Hollywood2/AVIClips/actioncliptrain";
-	char tempStyeStart2[filePathSize] = "../../remote/Hollywood2/AVIClips/actioncliptest";
+	char tempStyeStart[filePathSize] = "../../../remote/Hollywood2/AVIClips/actioncliptrain";
+	char tempStyeStart2[filePathSize] = "../../../remote/Hollywood2/AVIClips/actioncliptest";
 	strcpy(resultStart,tempStyeStart);
 	strcpy(resultStart2,tempStyeStart2);
 

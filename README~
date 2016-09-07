@@ -36,7 +36,7 @@ Darwin　利用liblinear得到每个视频的w参数，也就是说，把每个�
 
 运行方法：bash run.sh
 
-trainAndTest，matlab代码.
+trainAndTest，matlab代码，执行test，得到w系数.
 #Process 根据上述的ｗ参数，得到A*A'的ｗ文件，共1707个文件，分别用来做train和test(已经分好谁做train/test)
 
 #trainAndTest　读取每个视频的w表示，进行分类，并且统计结果，保存在当前目录下面的accuracyFile中
@@ -69,4 +69,9 @@ find /root -size -5557c -size +5555c -exec ls -ld {} \;
 find /root -size -500K -size +50K -exec ls -ld {} \;
 
 查找 小于500K，大于50K的文件
+
+
+
+46% using ranking feature map ,sign*sqrt(abs), as classifier feature map
+now, using sqrt(virtual number), sqrt(virtual number).
 
