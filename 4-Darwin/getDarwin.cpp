@@ -23,19 +23,33 @@ using namespace std;
 
 float **getNonLinearity(float ** Data , int frames)
 {
+	float **Data_double= new double*[frames];
+
     int sign = 1;
-     for (int i = 0; i < frames; ++i)
+    for (int i = 0; i < frames; ++i)
     {
-        for (int j = 0; j < DIMENSION; ++j)
+    	Data_double[i] = new double[2*DIMENSION];
+        for (int j = 0; j < 2*DIMENSION; ++j)
         {
             if(Data[i][j] != 0 )
             {
-               sign = Data[i][j] > 0 ? 1:-1;
-               Data[i][j] = sign * sqrt(fabs(Data[i][j]));// this is the first type of it.
+                sign = Data[i][j] > 0 ? 1:-1;
+                //Data[i][j] = sign * sqrt(fabs(Data[i][j]));// this is the first type of it.
+                //Data[i][j] = sign * sqrt(fabs(Data[i][j]));// this is the second type of it.
+                if(sign == 1)
+                {
+	               	Data_double[i][j] = sqrt(fabs(Data[i][j]));
+	             	Data_double[i][j+1] = 0;
+            	}
+            	else
+            	{
+            		Data_double[i][j] = 0;
+	             	Data_double[i][j+1] = sqrt(fabs(Data[i][j]));
+            	}
             }
         }
     }
-    return Data;
+    return Data_double;
 }
 void printData(float **Data,int frames)
 {
@@ -104,11 +118,11 @@ void saveData(float ** Data,int frames)
 void saveResult(float * w_fow,float *w_ref,char *filename)
 {
 	    ofstream file(filename);
-	    for (int j = 0; j < DIMENSION; ++j)
+	    for (int j = 0; j < 2*DIMENSION; ++j)
 	    {
 	           file<<w_fow[j]<<" ";
 	    }
-	    for (int j = 0; j < DIMENSION; ++j)
+	    for (int j = 0; j < 2*DIMENSION; ++j)
 	    {
 	           file<<w_ref[j]<<" ";
 	    }

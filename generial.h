@@ -97,7 +97,7 @@ static int trainNum = 823;
 static int testNum = 884;
 static int num_videos = 1707;
 //=========================================================================================//
-const int darwinDimension = 2*DIMENSION;
+const int darwinDimension = 2*2*DIMENSION;
 static char *accuracyFile = "../accuracyFile";
 
 
